@@ -1,0 +1,25 @@
+name: Hata bildirimi
+description: Tekrarlanabilir bir uygulama hatası bildirin
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Sorun
+      description: Beklenen ve gerçekleşen davranışı yazın.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Yeniden üretme adımları
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Sürüm ve işletim sistemi
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Günlük
+      description: Kişisel veri, API anahtarı veya telifli metin eklemeyin.

@@ -1,0 +1,22 @@
+[ocr]
+engine = "tesseract"
+language = "tur"
+dpi = 300
+gpu = false
+split_double_pages = true
+preserve_illustrations = true
+
+[ai]
+provider = "ollama"
+base_url = "http://localhost:11434"
+model = "pdf2epub-ai"
+timeout_seconds = 300
+
+[epub]
+language = "tr"
+publisher = "PDF2EPUB AI"
+
+[performance]
+workers = 1
+cache_dir = ".pdf2epub-ai-cache"
+keep_temp = false
