@@ -22,7 +22,7 @@ class PdfAnalyzer:
         """Render PDF pages to images."""
 
         try:
-            import fitz  # type: ignore[import-not-found]
+            import fitz  # type: ignore[import-untyped]
         except Exception as exc:
             raise RuntimeError("PyMuPDF is required to render PDF pages") from exc
 

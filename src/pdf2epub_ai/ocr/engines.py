@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import shutil
 import subprocess
+import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
@@ -138,6 +139,7 @@ class TesseractEngine(OcrEngine):
     def _command(self) -> Path | None:
         discovered = shutil.which("tesseract")
         candidates = [
+            self._application_dir() / "tesseract/tesseract.exe",
             Path(discovered) if discovered else None,
             Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe"),
             Path.home() / "AppData/Local/Programs/Tesseract-OCR/tesseract.exe",
@@ -146,6 +148,7 @@ class TesseractEngine(OcrEngine):
 
     def _tessdata_dir(self) -> Path | None:
         candidates = [
+            self._application_dir() / "tesseract/tessdata",
             Path.cwd() / ".tools/tessdata",
             Path(r"C:\Program Files\Tesseract-OCR\tessdata"),
             Path.home() / "AppData/Local/Programs/Tesseract-OCR/tessdata",
@@ -155,6 +158,14 @@ class TesseractEngine(OcrEngine):
             (path for path in candidates if (path / f"{language}.traineddata").exists()),
             None,
         )
+
+    @staticmethod
+    def _application_dir() -> Path:
+        """Return the executable directory for frozen and source installations."""
+
+        if getattr(sys, "frozen", False):
+            return Path(sys.executable).resolve().parent
+        return Path.cwd()
 
 
 class PaddleOcrEngine(OcrEngine):

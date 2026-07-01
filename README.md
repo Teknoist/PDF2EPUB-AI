@@ -20,7 +20,12 @@ AI katmanıyla yalnızca OCR hatalarını düzeltir.
 
 ## Hızlı başlangıç - Windows
 
-Gereksinimler: Python 3.12+, Tesseract OCR ve isteğe bağlı Ollama.
+Kurulum gerektirmeyen paket için [Releases](https://github.com/Teknoist/PDF2EPUB-AI/releases/latest)
+sayfasından `PDF2EPUB-AI-Windows-x64.zip` dosyasını indirin. ZIP'i çıkarıp
+`PDF2EPUB-AI.exe` dosyasını çalıştırın. Tesseract OCR ve Türkçe dil verisi pakete
+dahildir. AI'sız mod doğrudan çalışır; AI modu için Ollama ayrıca kurulmalıdır.
+
+Kaynak koddan kurulum gereksinimleri: Python 3.12+, Tesseract OCR ve isteğe bağlı Ollama.
 
 ```powershell
 git clone https://github.com/Teknoist/PDF2EPUB-AI.git

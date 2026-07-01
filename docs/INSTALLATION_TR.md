@@ -1,5 +1,14 @@
 # Windows Kurulumu
 
+## Taşınabilir paket
+
+1. [Son sürümü](https://github.com/Teknoist/PDF2EPUB-AI/releases/latest) açın.
+2. `PDF2EPUB-AI-Windows-x64.zip` dosyasını indirin ve bir klasöre çıkarın.
+3. `PDF2EPUB-AI.exe` dosyasını çalıştırın.
+
+Tesseract ve Türkçe OCR verisi pakete dahildir. AI'sız kullanım için başka kurulum
+gerekmez. AI kullanımı için Ollama ve seçilen model ayrıca kurulmalıdır.
+
 ## 1. Python
 
 Python 3.12 veya daha yeni bir sürüm kurun. Kurulum sırasında `Add Python to PATH`

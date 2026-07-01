@@ -2,8 +2,12 @@ name: Build Windows
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -16,7 +20,41 @@ jobs:
           cache: pip
       - run: python -m pip install -e ".[ocr,gui,package]"
       - run: python -m PyInstaller --noconfirm --clean pdf2epub-ai.spec
+      - name: Bundle Tesseract OCR
+        shell: pwsh
+        run: |
+          choco install tesseract --yes --no-progress
+          $source = "C:\Program Files\Tesseract-OCR"
+          $target = "dist\PDF2EPUB-AI\tesseract"
+          Copy-Item $source $target -Recurse
+          Invoke-WebRequest `
+            -Uri "https://github.com/tesseract-ocr/tessdata_fast/raw/main/tur.traineddata" `
+            -OutFile "$target\tessdata\tur.traineddata"
+      - name: Create portable archive
+        shell: pwsh
+        run: |
+          @"
+          PDF2EPUB AI
+
+          PDF2EPUB-AI.exe dosyasini calistirin.
+          Tesseract OCR ve Turkce dil verisi pakete dahildir.
+          AI modu icin Ollama ayrica kurulmalidir; AI'siz mod ek kurulum gerektirmez.
+          "@ | Set-Content "dist\PDF2EPUB-AI\KULLANIM.txt" -Encoding UTF8
+          Compress-Archive `
+            -Path "dist\PDF2EPUB-AI\*" `
+            -DestinationPath "PDF2EPUB-AI-Windows-x64.zip" `
+            -CompressionLevel Optimal
       - uses: actions/upload-artifact@v4
         with:
           name: PDF2EPUB-AI-Windows
-          path: dist/PDF2EPUB-AI
+          path: PDF2EPUB-AI-Windows-x64.zip
+      - name: Upload GitHub Release asset
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${{ github.ref_name }}"
+          "PDF2EPUB-AI-Windows-x64.zip"
+          --repo "${{ github.repository }}"
+          --title "PDF2EPUB AI ${{ github.ref_name }}"
+          --generate-notes
