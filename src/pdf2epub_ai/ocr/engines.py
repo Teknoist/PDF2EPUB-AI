@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import shutil
 import subprocess
 import sys
@@ -111,14 +112,26 @@ class TesseractEngine(OcrEngine):
         image = Image.open(image_path)
         options = "--psm 3"
         tessdata = self._tessdata_dir()
+        previous_tessdata_prefix = os.environ.get("TESSDATA_PREFIX")
         if tessdata is not None:
-            options += f' --tessdata-dir "{tessdata}"'
-        data = pytesseract.image_to_data(
-            image,
-            lang=self.config.language,
-            output_type=pytesseract.Output.DICT,
-            config=options,
-        )
+            # pytesseract parses config strings with Windows shlex rules, which
+            # can pass the surrounding quotes through to Tesseract. Supplying
+            # the data directory via the environment handles paths with spaces
+            # without turning the quotes into part of the directory name.
+            os.environ["TESSDATA_PREFIX"] = str(tessdata)
+        try:
+            data = pytesseract.image_to_data(
+                image,
+                lang=self.config.language,
+                output_type=pytesseract.Output.DICT,
+                config=options,
+            )
+        finally:
+            if tessdata is not None:
+                if previous_tessdata_prefix is None:
+                    os.environ.pop("TESSDATA_PREFIX", None)
+                else:
+                    os.environ["TESSDATA_PREFIX"] = previous_tessdata_prefix
         words: list[str] = []
         confidences: list[float] = []
         for word, confidence in zip(data.get("text", []), data.get("conf", []), strict=False):
