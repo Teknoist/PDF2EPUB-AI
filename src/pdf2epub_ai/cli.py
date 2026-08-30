@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import click
@@ -44,6 +45,10 @@ def main(
 ) -> None:
     """Convert scanned or mixed PDFs into EPUB 3."""
 
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
     configure_logging(verbose)
     config = AppConfig.from_file(config_path).merged(
         {
